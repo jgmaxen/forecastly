@@ -66,13 +66,11 @@ class WeatherService {
   // Fetch location data (coordinates) from OpenWeather Geocoding API
   private async fetchLocationData(city: string): Promise<Coordinates | null> {
     try {
-      const url = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${this.apiKey}`;
+      const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${this.apiKey}`;
       const response = await fetch(url);
-      
-      // Explicitly type the JSON response
-      const data: { lat: number; lon: number }[] = await response.json();
-  
-      if (data.length === 0) return null;
+      const data = (await response.json()) as { lat: number; lon: number }[];
+
+      if (!Array.isArray(data) || data.length === 0) return null;
       return { lat: data[0].lat, lon: data[0].lon };
     } catch (error) {
       console.error('Error fetching location data:', error);
@@ -86,8 +84,6 @@ class WeatherService {
     try {
       const url = `${this.baseURL}/weather?lat=${lat}&lon=${lon}&units=metric&appid=${this.apiKey}`;
       const response = await fetch(url);
-      
-      // Explicitly type the response as WeatherData
       const data: WeatherData = await response.json();
       return data;
     } catch (error) {
@@ -102,9 +98,12 @@ class WeatherService {
     try {
       const url = `${this.baseURL}/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${this.apiKey}`;
       const response = await fetch(url);
-      
-      // Explicitly type the response as ForecastData
       const data: ForecastData = await response.json();
+
+      if (!data || !data.list) {
+        throw new Error('Invalid forecast data received');
+      }
+
       return data;
     } catch (error) {
       console.error('Error fetching forecast data:', error);
@@ -112,7 +111,7 @@ class WeatherService {
     }
   }
 
-  // Parse the current weather data
+  // Parse the current weather data into a Weather object
   private parseCurrentWeather(data: WeatherData): Weather {
     return new Weather(
       data.name,
@@ -151,4 +150,4 @@ class WeatherService {
   }
 }
 
-export default new WeatherService();
+export default WeatherService;

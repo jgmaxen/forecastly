@@ -4,20 +4,22 @@ import path from 'path';
 dotenv.config();
 
 // Import the routes
+import weatherRoutes from './routes/api/weatherRoutes.js';
 import routes from './routes/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// TODO: Serve static files of entire client dist folder
+// Serve static files of entire client dist folder
 app.use(express.static(path.join(process.cwd(), 'client', 'dist')));
 
-// TODO: Implement middleware for parsing JSON and urlencoded form data
+// Implement middleware for parsing JSON and urlencoded form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// TODO: Implement middleware to connect the routes
+// Implement middleware to connect the routes
 app.use('/api', routes);
+app.use('/api/weather', weatherRoutes);
 
 // Catch-all route to serve index.html for SPA (if applicable)
 app.get('*', (__req, res) => {
