@@ -5,7 +5,7 @@
  * 1. Correct the line height in all browsers.
  * 2. Prevent adjustments of font size after orientation changes in iOS.
  */
- html {
+html {
   line-height: 1.15;
   /* 1 */
   -webkit-text-size-adjust: 100%;
@@ -141,8 +141,8 @@ img {
   border-style: none;
 }
 
-/* Forms
-     ========================================================================== */
+==========================================================================*/
+
 /**
    * 1. Change the font styles in all browsers.
    * 2. Remove the margin in Firefox and Safari.
@@ -864,27 +864,27 @@ a:hover {
 
 /* Gap */
 .gap-0 {
-  gap: 0!important
+  gap: 0 !important
 }
 
 .gap-1 {
-  gap: .25rem!important
+  gap: .25rem !important
 }
 
 .gap-2 {
-  gap: .5rem!important;
+  gap: .5rem !important;
 }
 
 .gap-3 {
-  gap: 1rem!important
+  gap: 1rem !important
 }
 
 .gap-4 {
-  gap: 1.5rem!important
+  gap: 1.5rem !important
 }
 
 .gap-5 {
-  gap: 3rem!important
+  gap: 3rem !important
 }
 
 .text-uppercase {
