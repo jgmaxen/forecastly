@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "name": "toronto",
+    "id": "d5e01695-81d9-4b72-8e3b-9ef076f637fd"
+  },
+  {
+    "name": "Greensboro",
+    "id": "66cf79dc-fd7f-44ce-b43c-4ea79ce8ffbd"
+  },
+  {
+    "name": "LA",
+    "id": "fe10819b-53a3-4928-971b-8f25111f4323"
+  },
+  {
+    "name": "New york",
+    "id": "fa3574ef-ee12-47d8-bb4d-ffca4449e99c"
+  },
+  {
+    "name": "Texas",
+    "id": "ff42867d-54ba-4966-bc2c-28e499a481de"
+  },
+  {
+    "name": "chicago",
+    "id": "f0cab20e-fef5-4ea9-a0aa-b04aba811842"
+  },
+  {
+    "name": "Dallas",
+    "id": "341c140c-c472-41e4-b948-9148775d431c"
+  },
+  {
+    "name": "san fransico",
+    "id": "323824d4-8005-4953-a7c3-434296d0a1a0"
+  },
+  {
+    "name": "Greensboro",
+    "id": "fece3427-f6a3-4b47-a56f-bb9d99180a74"
+  },
+  {
+    "name": "Los Angeles",
+    "id": "a2c4fe79-5136-431f-a1c5-7e9bfe03d2ee"
+  }
+]

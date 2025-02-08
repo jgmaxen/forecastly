@@ -1,66 +1,98 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid'; // For unique IDs
+import fs from 'node:fs/promises';
+import fetch from 'node-fetch';
 
-// Define a City class
 class City {
-  constructor(public id: string, public name: string) {}
+  name: string;
+  id: string;
+
+  constructor(name: string, id: string) {
+    this.name = name;
+    this.id = id;
+  }
 }
 
-const historyFilePath = path.join(process.cwd(), 'data', 'searchHistory.json');
+interface WeatherApiResponse {
+  id: string;
+  cod: number;
+  name: string;
+}
 
 class HistoryService {
-  // Read from the searchHistory.json file
+  private filePath = 'db/db.json';
+  private apiKey = 'f1008e8e6f947296523fee80111c98af';
+
   private async read(): Promise<City[]> {
     try {
-      const data = await fs.readFile(historyFilePath, 'utf-8');
-      return JSON.parse(data);
+      const data = await fs.readFile(this.filePath, 'utf8');
+      return data ? JSON.parse(data) : [];
     } catch (error) {
-      // If file doesn't exist or read error, return an empty array
-      console.error('Error reading history file:', error);
+      console.error('Error reading file:', error);
       return [];
     }
   }
 
-  // Write updated cities array to searchHistory.json
   private async write(cities: City[]): Promise<void> {
     try {
-      await fs.writeFile(historyFilePath, JSON.stringify(cities, null, 2), 'utf-8');
+      await fs.writeFile(this.filePath, JSON.stringify(cities, null, 2));
     } catch (error) {
-      console.error('Error writing to history file:', error);
-      throw new Error('Failed to write to history file');
+      console.error('Error writing file:', error);
     }
   }
 
-  // Get all saved cities
+  private async fetchCityId(city: string): Promise<string | null> {
+    const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.apiKey}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      // Type assertion here
+      const weatherData = data as WeatherApiResponse;
+
+      if (weatherData.cod === 200) {
+        return weatherData.id.toString();
+      }
+      console.error('City not found');
+      return null;
+    } catch (error) {
+      console.error('Error fetching city ID:', error);
+      return null;
+    }
+  }
+
   async getCities(): Promise<City[]> {
     return await this.read();
   }
 
-  // Add a city to search history (if it doesn’t already exist)
-  async addCity(cityName: string): Promise<City[]> {
-    let cities = await this.read();
+  async addCity(city: string): Promise<City | null> {
+    if (!city) throw new Error('City cannot be blank');
 
-    if (!cities.some(city => city.name.toLowerCase() === cityName.toLowerCase())) {
-      const newCity = new City(uuidv4(), cityName);
-      cities.push(newCity);
-      await this.write(cities);
+    const cities = await this.getCities();
+    if (cities.find(c => c.name.toLowerCase() === city.toLowerCase())) {
+      return null;
     }
 
-    return cities;
+    const cityId = await this.fetchCityId(city);
+    if (!cityId) {
+      throw new Error('Could not retrieve city ID');
+    }
+
+    const newCity = new City(city, cityId);
+    cities.push(newCity);
+    await this.write(cities);
+    return newCity;
   }
 
-  // Remove a city from search history
-  async removeCity(id: string): Promise<City[]> {
-    let cities = await this.read();
+  async removeCity(id: string): Promise<boolean> {
+    let cities = await this.getCities();
     const updatedCities = cities.filter(city => city.id !== id);
 
     if (cities.length === updatedCities.length) {
-      throw new Error('City not found');
+      return false;
     }
 
     await this.write(updatedCities);
-    return updatedCities;
+    return true;
   }
 }
 
